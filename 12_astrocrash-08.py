@@ -64,7 +64,7 @@ class Asteroid(Wrapper):
               MEDIUM: games.load_image(os.path.join(STATIC, 'cartman_medium.jpg')),
               LARGE: games.load_image(os.path.join(STATIC, 'cartman_big.jpg'))}
 
-    SPEED = 3
+    speed = 3
     # SPAWN - количество новых астеройдов, но которое распадается один взорванный
     SPAWN = 2
     POINTS = 30
@@ -74,7 +74,7 @@ class Asteroid(Wrapper):
     def __init__(self, game, x, y, size, speed=3):
         """ Инициализирует спрайт с изображением астеройда. """
         Asteroid.total += 1
-        self.SPEED = speed
+        self.speed = speed
         super(Asteroid, self).__init__(
             image=Asteroid.images[size],
             x=x, y=y,
@@ -244,7 +244,7 @@ class Game(object):
         """ Инициализирует объект Game. """
         # выбор начального игрового уровня
         self.level = 0
-        self.SPEED_ASTEROID = 2
+        self.speed_asteroid = 2
         self.bonus = [2, 4, 8, 10, 16, 20, 24, 32, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
         self.life = games.Text(value=3,
                                size=30,
@@ -299,7 +299,7 @@ class Game(object):
 
         # зарезервированное пространство вокруг корабля
         BUFFER = 150
-        self.SPEED_ASTEROID += 1
+        self.speed_asteroid += 1
         # создание новых астеройдов
         for i in range(self.level):
             # вычислим x и y, чтобы от корабля они отстояли минимум на BUFFER пикселов
@@ -322,7 +322,7 @@ class Game(object):
             # создадим астеройд
             new_asteroid = Asteroid(game=self,
                                     x=x, y=y,
-                                    size=Asteroid.LARGE, speed=self.SPEED_ASTEROID)
+                                    size=Asteroid.LARGE, speed=self.speed_asteroid)
             games.screen.add(new_asteroid)
 
         # отображение номера уровня
