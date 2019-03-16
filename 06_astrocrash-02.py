@@ -5,7 +5,7 @@ import random
 import games
 import os
 
-STATIC = 'static'
+STATIC = 'static/new'
 
 # Вызываем метод, инициализирующий окно
 games.init(screen_width=640, screen_height=480, fps=50)
@@ -17,9 +17,9 @@ class Asteroid(games.Sprite):
     SMALL = 1
     MEDIUM = 2
     LARGE = 3
-    images = {SMALL: games.load_image(os.path.join(STATIC, 'asteroid_small.bmp')),
-              MEDIUM: games.load_image(os.path.join(STATIC, 'asteroid_med.bmp')),
-              LARGE: games.load_image(os.path.join(STATIC, 'asteroid_big.bmp'))}
+    images = {SMALL: games.load_image(os.path.join(STATIC, 'cartman_small.bmp')),
+              MEDIUM: games.load_image(os.path.join(STATIC, 'cartman_medium.bmp')),
+              LARGE: games.load_image(os.path.join(STATIC, 'cartman_big.bmp'))}
 
     SPEED = 2
 
@@ -50,7 +50,7 @@ class Asteroid(games.Sprite):
 
 class Ship(games.Sprite):
     """ Корабль игрока. """
-    image = games.load_image(os.path.join(STATIC, 'ship.bmp'))
+    image = games.load_image(os.path.join(STATIC, 'mario.jpg'))
     ROTATION_STEP = 3
 
     def update(self):

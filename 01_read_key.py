@@ -1,12 +1,8 @@
-# Читаю с клавиатуры
-# Демонстрирует чтение клавиатурного ввода
-
 import games
 import os
 
-STATIC = 'static'
+STATIC = 'static/new'
 
-# Вызываем метод, инициализирующий окно
 games.init(screen_width=640, screen_height=480, fps=50)
 
 
@@ -30,10 +26,10 @@ class Ship(games.Sprite):
 # Наконец функция main(). Она загружает фоновую картинку с туманностью, создаёт посередине экрана спрайт с изображением
 # космического корабля и запускает работу графического окна вызовом mainloop().
 def main():
-    nebula_image = games.load_image(os.path.join(STATIC, 'nebula.jpg'), transparent=False)
+    nebula_image = games.load_image(os.path.join(STATIC, 'background.jpg'), transparent=False)
     games.screen.background = nebula_image
 
-    ship_image = games.load_image(os.path.join(STATIC, 'ship.bmp'))
+    ship_image = games.load_image(os.path.join(STATIC, 'mario.png'))
     the_ship = Ship(image=ship_image,
                     x=games.screen.width / 2,
                     y=games.screen.height / 2)

@@ -4,16 +4,17 @@
 import games
 import os
 
-STATIC = 'static'
+STATIC = 'static/new'
 
 # Вызываем метод, инициализирующий окно
 games.init(screen_width=640, screen_height=480, fps=50)
 
 # загрузка звукового файла
+
 missile_sound = games.load_sound(os.path.join(STATIC, 'missile.wav'))
 
 # загрузка музыкального файла
-games.music.load(os.path.join(STATIC, 'theme.mid'))
+games.music.load(os.path.join(STATIC, 'mario_theme.mp3'))
 
 choice = None
 while choice != '0':

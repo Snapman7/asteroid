@@ -60,21 +60,21 @@ class Asteroid(Wrapper):
     SMALL = 1
     MEDIUM = 2
     LARGE = 3
-    images = {SMALL: games.load_image(os.path.join(STATIC, 'asteroid_small.bmp')),
-              MEDIUM: games.load_image(os.path.join(STATIC, 'asteroid_med.bmp')),
-              LARGE: games.load_image(os.path.join(STATIC, 'asteroid_big.bmp'))}
+    images = {SMALL: games.load_image(os.path.join(STATIC, 'cartman_small.jpg')),
+              MEDIUM: games.load_image(os.path.join(STATIC, 'cartman_medium.jpg')),
+              LARGE: games.load_image(os.path.join(STATIC, 'cartman_big.jpg'))}
 
-    SPEED = 2
+    SPEED = 3
     # SPAWN - количество новых астеройдов, но которое распадается один взорванный
     SPAWN = 2
     POINTS = 30
     # total - общая численность астеройдов
     total = 0
 
-    def __init__(self, game, x, y, size):
+    def __init__(self, game, x, y, size, speed=3):
         """ Инициализирует спрайт с изображением астеройда. """
         Asteroid.total += 1
-
+        self.SPEED = speed
         super(Asteroid, self).__init__(
             image=Asteroid.images[size],
             x=x, y=y,
@@ -109,7 +109,7 @@ class Asteroid(Wrapper):
 
 class Ship(Collider):
     """ Корабль игрока. """
-    image = games.load_image(os.path.join(STATIC, 'ship.bmp'))
+    image = games.load_image(os.path.join(STATIC, 'mario.png'))
     # thrust.wav - звук ускоряющегося рывка
     sound = games.load_sound(os.path.join(STATIC, 'thrust.wav'))
     ROTATION_STEP = 3
@@ -132,13 +132,13 @@ class Ship(Collider):
         super(Ship, self).update()
 
         # вращает корабль при нажатии <- и ->
-        if games.keyboard.is_pressed(games.K_LEFT):
+        if games.keyboard.is_pressed(games.K_a):
             self.angle -= Ship.ROTATION_STEP
-        if games.keyboard.is_pressed(games.K_RIGHT):
+        if games.keyboard.is_pressed(games.K_d):
             self.angle += Ship.ROTATION_STEP
 
         # корабль совершает рывок при нажатии стрелки вверх
-        if games.keyboard.is_pressed(games.K_UP):
+        if games.keyboard.is_pressed(games.K_w):
             Ship.sound.play()
             # изменение горизонтальной и вертикальной скорости корабля с учётом угла поворота
             angle = self.angle * math.pi / 180  # преобразование в радианы
@@ -148,6 +148,15 @@ class Ship(Collider):
             # ограничение горизонтальной и вертикальной скорости
             self.dx = min(max(self.dx, -Ship.VELOCITY_MAX), Ship.VELOCITY_MAX)
             self.dy = min(max(self.dy, -Ship.VELOCITY_MAX), Ship.VELOCITY_MAX)
+
+        if games.keyboard.is_pressed(games.K_s):
+            Ship.sound.play()
+            # изменение горизонтальной и вертикальной скорости корабля с учётом угла поворота
+            angle = self.angle * math.pi / 180  # преобразование в радианы
+            self.dx /= 1.1
+            self.dy /= 1.1
+
+            # ограничение горизонтальной и вертикальной скорости
 
         # если запуск следующей ракеты пока ещё не разрешён, вычесть 1 из длины оставшегося интервала ожидания
         if self.missile_wait > 0:
@@ -167,7 +176,7 @@ class Ship(Collider):
 
 class Missile(Collider):
     """ Ракета, которую может выпустить космический корабль игрока. """
-    image = games.load_image(os.path.join(STATIC, 'missile.bmp'))
+    image = games.load_image(os.path.join(STATIC, 'mario_missile.jpeg'))
     sound = games.load_sound(os.path.join(STATIC, 'missile.wav'))
     BUFFER = 40
     VELOCITY_FACTOR = 7
@@ -223,7 +232,7 @@ class Explosion(games.Animation):
     def __init__(self, x, y):
         super(Explosion, self).__init__(images=Explosion.images,
                                         x=x, y=y,
-                                        repeat_interval=4, n_repeats=1,
+                                        repeat_interval=5, n_repeats=2,
                                         is_collideable=False)
         Explosion.sound.play()
 
@@ -235,6 +244,14 @@ class Game(object):
         """ Инициализирует объект Game. """
         # выбор начального игрового уровня
         self.level = 0
+        self.SPEED_ASTEROID = 2
+        self.bonus = [2, 4, 8, 10, 16, 20, 24, 32, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
+        self.life = games.Text(value=3,
+                               size=30,
+                               color=color.red,
+                               top=5,
+                               right=20,
+                               is_collideable=False)
 
         # загрузка звука, сопровождающего переход на следующий уровень
         self.sound = games.load_sound(os.path.join(STATIC, 'level.wav'))
@@ -246,7 +263,9 @@ class Game(object):
                                 top=5,
                                 right=games.screen.width - 10,
                                 is_collideable=False)
+
         games.screen.add(self.score)
+        games.screen.add(self.life)
 
         # создание корабля, которым будет управлять игрок
         self.ship = Ship(game=self,
@@ -257,11 +276,11 @@ class Game(object):
     def play(self):
         """ Начинает игру. """
         # запуск музыкальной темы
-        games.music.load(os.path.join(STATIC, 'theme.mid'))
+        games.music.load(os.path.join(STATIC, 'mario_theme.mp3'))
         games.music.play(-1)
 
         # загрузка и назначение фоновой картинки
-        nebula_image = games.load_image(os.path.join(STATIC, 'nebula.jpg'))
+        nebula_image = games.load_image(os.path.join(STATIC, 'background.jpg'))
         games.screen.background = nebula_image
 
         # переход к уровню 1
@@ -273,10 +292,14 @@ class Game(object):
     def advance(self):
         """ Переводит игру на очередной уровень. """
         self.level += 1
+        life_up = ''
+        if self.level in self.bonus:
+            self.life.value += 1
+            life_up = ' + bonus life'
 
         # зарезервированное пространство вокруг корабля
         BUFFER = 150
-
+        self.SPEED_ASTEROID += 1
         # создание новых астеройдов
         for i in range(self.level):
             # вычислим x и y, чтобы от корабля они отстояли минимум на BUFFER пикселов
@@ -299,13 +322,13 @@ class Game(object):
             # создадим астеройд
             new_asteroid = Asteroid(game=self,
                                     x=x, y=y,
-                                    size=Asteroid.LARGE)
+                                    size=Asteroid.LARGE, speed=self.SPEED_ASTEROID)
             games.screen.add(new_asteroid)
 
         # отображение номера уровня
-        level_message = games.Message(value="Level " + str(self.level),
+        level_message = games.Message(value="Level " + str(self.level) + life_up,
                                       size=40,
-                                      color=color.yellow,
+                                      color=color.black,
                                       x=games.screen.width / 2,
                                       y=games.screen.width / 10,
                                       lifetime=3 * games.screen.fps,
@@ -317,17 +340,27 @@ class Game(object):
             self.sound.play()
 
     def end(self):
-        """ Завершает игру. """
-        # 5-секундное отображение 'Game Over'
-        end_message = games.Message(value="Game Over",
-                                    size=90,
-                                    color=color.red,
-                                    x=games.screen.width / 2,
-                                    y=games.screen.height / 2,
-                                    lifetime=5 * games.screen.fps,
-                                    after_death=games.screen.quit,
-                                    is_collideable=False)
-        games.screen.add(end_message)
+
+        """ Жизнь -- """
+        self.life.value -= 1
+        if self.life.value == 0:
+            """ Завершает игру. """
+            # 5-секундное отображение 'Game Over'
+            end_message = games.Message(value="Game Over",
+                                        size=90,
+                                        color=color.red,
+                                        x=games.screen.width / 2,
+                                        y=games.screen.height / 2,
+                                        lifetime=5 * games.screen.fps,
+                                        after_death=games.screen.quit,
+                                        is_collideable=False)
+            games.screen.add(end_message)
+            return True
+        else:
+            self.ship = Ship(game=self,
+                             x=games.screen.width / 2,
+                             y=games.screen.height / 2)
+            games.screen.add(self.ship)
 
 
 def main():

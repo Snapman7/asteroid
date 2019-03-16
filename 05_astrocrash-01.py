@@ -5,7 +5,7 @@ import random
 import games
 import os
 
-STATIC = 'static'
+STATIC = 'static/new'
 
 # Вызываем метод, инициализирующий окно
 games.init(screen_width=640, screen_height=480, fps=50)
@@ -17,9 +17,9 @@ class Asteroid(games.Sprite):
     SMALL = 1
     MEDIUM = 2
     LARGE = 3
-    images = {SMALL: games.load_image(os.path.join(STATIC, 'asteroid_small.bmp')),
-              MEDIUM: games.load_image(os.path.join(STATIC, 'asteroid_med.bmp')),
-              LARGE: games.load_image(os.path.join(STATIC, 'asteroid_big.bmp'))}
+    images = {SMALL: games.load_image(os.path.join(STATIC, 'cartman_small.jpg')),
+              MEDIUM: games.load_image(os.path.join(STATIC, 'cartman_medium.jpg')),
+              LARGE: games.load_image(os.path.join(STATIC, 'cartman_big.jpg'))}
 
     SPEED = 2
 
@@ -50,7 +50,7 @@ class Asteroid(games.Sprite):
 
 def main():
     # назначаем фоновую картинку
-    nebula_image = games.load_image(os.path.join(STATIC, 'nebula.jpg'))
+    nebula_image = games.load_image(os.path.join(STATIC, 'background.jpg'))
     games.screen.background = nebula_image
 
     # создаём 8 астеройдов

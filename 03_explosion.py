@@ -4,12 +4,12 @@
 import games
 import os
 
-STATIC = 'static'
+STATIC = 'static/new'
 
 # Вызываем метод, инициализирующий окно
 games.init(screen_width=640, screen_height=480, fps=50)
 
-nebula_image = games.load_image(os.path.join(STATIC, 'nebula.jpg'), transparent=False)
+nebula_image = games.load_image(os.path.join(STATIC, 'background.jpg'), transparent=False)
 games.screen.background = nebula_image
 
 # Создадим список файлов-картинок, которые будут последовательно отображаться.
